@@ -1,0 +1,11 @@
+# Eclipse Files and Folders
+/Debug/
+.settings
+.project
+.cproject
+.gdbinit
+
+# Others
+/out/
+**/*.out
+**/*.lp

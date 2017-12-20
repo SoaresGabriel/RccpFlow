@@ -1,0 +1,82 @@
+NAME: Rand_30_74_79_4.rnd
+COMMENT: Random Edge Labeled  Graph with max degree constraints. The graph structure is built in a random way (according to the seed). By Francesco Carrabs (fcarrabs@unisa.it)
+NUMBER_VERTICES: 30
+NUMBER_EDGES: 74
+NUMBER_COLORS: 4
+MAX_DEGREE: 29
+SEED: 79
+LIST_EDGE_(source_destination_color)
+1 6 4
+1 9 1
+1 10 3
+1 12 2
+1 21 4
+1 24 2
+1 29 3
+2 10 2
+2 21 3
+2 22 4
+2 24 3
+3 4 4
+3 10 2
+3 17 3
+3 21 4
+3 24 2
+4 10 3
+4 21 1
+4 24 3
+5 10 3
+5 14 2
+5 21 2
+5 22 1
+5 24 1
+5 25 4
+6 10 2
+6 21 1
+6 24 1
+6 28 4
+7 10 4
+7 12 1
+7 21 2
+7 24 4
+7 30 4
+8 10 4
+8 21 4
+8 22 4
+8 24 3
+9 10 3
+9 21 4
+9 22 4
+9 24 4
+10 11 4
+10 12 2
+10 13 3
+10 14 2
+10 15 4
+10 16 4
+10 17 3
+10 18 2
+10 19 1
+10 20 2
+10 21 4
+10 22 4
+10 23 1
+10 24 2
+10 25 3
+11 13 3
+11 21 2
+11 24 4
+11 27 3
+12 17 1
+12 20 3
+12 23 3
+12 24 2
+13 16 2
+13 24 4
+13 30 4
+14 24 4
+15 27 3
+18 23 4
+19 26 1
+20 24 4
+22 26 4
