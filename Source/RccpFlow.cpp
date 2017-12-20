@@ -2,7 +2,7 @@
 #include "MyCutCallback.h"
 #include "MyLazyCallback.h"
 
-RccpFlow::RccpFlow(Graph& graph) : graph(graph), adjList(graph.getAdjList()), V(graph.N), M(graph.getTrivialWeight()), L(graph.C),
+RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(instance), adjList(graph.getAdjList()), V(graph.N), M(graph.getTrivialWeight()), L(graph.C),
 									model(env), x(env, V), Fs(env, V), Ft(env, V) {
 
 		const vector<list<int> >& adjList = graph.getAdjList();
@@ -184,6 +184,8 @@ void RccpFlow::rccpFlow(){
 	RccpFlow.setOut(env.getNullStream());
 	RccpFlow.setWarning(env.getNullStream());
 
+	RccpFlow.setParam(IloCplex::TiLim, 3*60*60); // 3h
+
 	RccpFlow.solve();
 
 	//RccpFlow.exportModel("RccpFlow.lp");
@@ -195,7 +197,7 @@ void RccpFlow::rccpFlow(){
 
 	finalTime = clock();
 
-	// Mostra as arestas em cada fluxo
+	/*// Mostra as arestas em cada fluxo
 	for(int f = 0; f < V; f++){
 		cout << "Fluxo " << f << endl;
 		for(int i = 0; i < V; i++){
@@ -207,7 +209,7 @@ void RccpFlow::rccpFlow(){
 			}
 		}
 		cout << endl;
-	}
+	}*/
 
 	// Monta os ciclos da solução
 	vector<vector<int> > ciclos;
@@ -246,9 +248,9 @@ void RccpFlow::rccpFlow(){
 
 	long executionTime = ((finalTime - initialTime) / (CLOCKS_PER_SEC / 1000));
 
-	printResult(ciclos, M, executionTime);
+	printResult(instance, ciclos, M, executionTime, RccpFlow.getNnodes(), RccpFlow.getObjValue() == RccpFlow.getBestObjValue());
 
-	// Imprime os ciclos
+	/*// Imprime os ciclos
 	for(unsigned int i = 0; i < ciclos.size(); i++){
 		cout << "Ciclo " << ciclos[i].size() << ": ";
 		for(unsigned int j = 0; j < ciclos[i].size(); j++){
@@ -260,7 +262,7 @@ void RccpFlow::rccpFlow(){
 	for(int i = 0; i < V; i++){
 		cout << "Vertice" << i << "\tFs: " << RccpFlow.getValue(Fs[i])
 				<< "\tFt: " << RccpFlow.getValue(Ft[i]) << endl;
-	}
+	}*/
 
 }
 

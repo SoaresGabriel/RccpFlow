@@ -8,12 +8,13 @@
 
 class RccpFlow {
 public:
-	RccpFlow(Graph& graph);
+	RccpFlow(Graph& graph, string instance);
 
 	void rccpFlow();
 
 private:
 	Graph& graph;
+	string instance;
 	const vector<list<int> >& adjList;
 	int V, M, L;
 	IloEnv env;

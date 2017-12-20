@@ -7,6 +7,6 @@
 using namespace std;
 
 bool existX(int i, int j, int f, int V);
-void printResult(vector<vector<int> >& cycles, int trivialWeight, long executionTime );
+void printResult(string instance, vector<vector<int> >& cycles, int trivialWeight, long executionTime, long nodes, bool optimal);
 
 #endif /* UTIL_H_ */

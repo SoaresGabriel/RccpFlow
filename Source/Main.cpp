@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
 
 	Graph &graph = ReadData(instance).read();
 
-	RccpFlow rccpFlow = RccpFlow(graph);
+	RccpFlow rccpFlow = RccpFlow(graph, instance);
 
 	rccpFlow.rccpFlow();
 
