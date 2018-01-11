@@ -1,6 +1,7 @@
 #include "RccpFlow.h"
 #include "MyCutCallback.h"
 #include "MyLazyCallback.h"
+#include <cmath>
 
 RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(instance), adjList(graph.getAdjList()), V(graph.N), M(graph.getTrivialWeight()), L(graph.C),
 									model(env), x(env, V), Fs(env, V), Ft(env, V) {
@@ -177,8 +178,8 @@ void RccpFlow::rccpFlow(){
 	MyLazyCallback* lazyCbk = new (env) MyLazyCallback(env, x, graph);
 	RccpFlow.use(lazyCbk);
 
-	/*MyCutCallback* cutCbk = new (env) MyCutCallback(env, x, graph);
-	RccpFlow.use(cutCbk);*/
+	//MyCutCallback* cutCbk = new (env) MyCutCallback(env, x, graph);
+	//RccpFlow.use(cutCbk);
 
 
 	RccpFlow.setOut(env.getNullStream());
@@ -248,7 +249,9 @@ void RccpFlow::rccpFlow(){
 
 	long executionTime = ((finalTime - initialTime) / (CLOCKS_PER_SEC / 1000));
 
-	printResult(instance, ciclos, M, executionTime, RccpFlow.getNnodes(), RccpFlow.getObjValue() == RccpFlow.getBestObjValue());
+	bool optimal = abs(RccpFlow.getObjValue() - RccpFlow.getBestObjValue()) < 0.1;
+
+	printResult(instance, ciclos, M, executionTime, RccpFlow.getNnodes(), optimal);
 
 	/*// Imprime os ciclos
 	for(unsigned int i = 0; i < ciclos.size(); i++){
