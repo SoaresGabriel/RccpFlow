@@ -84,9 +84,9 @@ void MyCutCallback::main(){
 					}
 				}
 
+				// adiciona a restricao se ela foi violada
 				int y = component.size() - 1;
-				if(valor < y - 0.001){
-					cout << expr << endl;
+				if(valor - 0.01 > y){
 					add(expr <= y ).end();
 				}
 
@@ -95,9 +95,6 @@ void MyCutCallback::main(){
 		}
 
 	}
-
-	 //getchar();
-
 }
 
 
