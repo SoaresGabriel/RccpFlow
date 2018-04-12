@@ -27,19 +27,10 @@ void MyLazyCallback::main(){
 
 				if(existX(i, j, f, V) && getValue(x[i][j][f]) > 0.01){
 					adjList[i].push_back(j);
-					adjList[j].push_back(i);
 				}
 
 			}
 		}
-
-		/*for(int i = 0; i < V; i++){
-			cout << i << ": ";
-			for(int j : adjList[i]){
-				cout << j << " -> ";
-			}
-			cout << endl;
-		}*/
 
 		vector<vector<int>> components;
 		getComponents(components, adjList);
