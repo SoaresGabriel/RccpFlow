@@ -40,14 +40,16 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(insta
 			}
 		}
 
-		// Função Objetivo
 		IloExpr SumFs(env);
 		IloExpr SumFt(env);
+
+		// Função Objetivo
 		for(int v = 0; v < V; v++){
 			SumFs += Fs[v];
 			SumFt += Ft[v];
 		}
 		model.add(IloMinimize(env, SumFs + (M-1)*SumFt));
+		// Fim função objetivo
 
 		// INEQUAÇÃO 01
 		for(int v = 0; v < V; v++){
@@ -62,7 +64,7 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(insta
 		}
 		// FIM INEQUACAO 01
 
-		// INEQUAÇÃO 02
+		// INEQUAÇÃO 02 e 03
 		for(int f = 0; f < V; f++){
 			IloExpr SumXijf(env);
 			for(int i = 0; i < V; i++){
@@ -76,10 +78,12 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(insta
 
 			}
 
-			model.add(SumXijf <= Fs[f] * V);
-			model.add(SumXijf <= (1 - Ft[f]) * V);
+			int minVL = min(V, L);
+
+			model.add(SumXijf <= (Fs[f] - Ft[f]) * minVL); // equação 2
+			//model.add(SumXijf <= (1 - Ft[f]) * minVL); // equação 3
 		}
-		// FIM INEQUAÇÃO 02
+		// FIM INEQUAÇÃO 02 e 03
 
 		// INEQUAÇÃO 03
 		/*for(int f = 0; f < V; f++){
@@ -175,15 +179,16 @@ void RccpFlow::rccpFlow(){
 
 	IloCplex RccpFlow(model);
 
+	// callback inteiro
 	MyLazyCallback* lazyCbk = new (env) MyLazyCallback(env, x, graph);
 	RccpFlow.use(lazyCbk);
 
-	//MyCutCallback* cutCbk = new (env) MyCutCallback(env, x, graph);
-	//RccpFlow.use(cutCbk);
+	// callback fracionario
+	MyCutCallback* cutCbk = new (env) MyCutCallback(env, x, Fs, Ft, graph);
+	RccpFlow.use(cutCbk);
 
-
-	RccpFlow.setOut(env.getNullStream());
-	RccpFlow.setWarning(env.getNullStream());
+	RccpFlow.setOut(env.getNullStream()); // @suppress("Invalid arguments")
+	RccpFlow.setWarning(env.getNullStream()); // @suppress("Invalid arguments")
 
 	RccpFlow.setParam(IloCplex::TiLim, 3*60*60); // 3h
 
