@@ -4,21 +4,21 @@
 #include <cmath>
 
 RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(instance), adjList(graph.getAdjList()), V(graph.N), M(graph.getTrivialWeight()), L(graph.C),
-									model(env), x(env, V), Fs(env, V), Ft(env, V) {
+									model(env), x(env, V), Cv(env, V), Sv(env, V) {
 
 		const vector<list<int> >& adjList = graph.getAdjList();
 
 		char var[100];
 		for (int i = 0; i < V; i++) {
-			sprintf(var, "Fs(%d)", i);
-			Fs[i].setName(var);
-			model.add(Fs[i]);
+			sprintf(var, "Cv(%d)", i);
+			Cv[i].setName(var);
+			model.add(Cv[i]);
 		}
 
 		for (int i = 0; i < V; i++) {
-			sprintf(var, "Ft(%d)", i);
-			Ft[i].setName(var);
-			model.add(Ft[i]);
+			sprintf(var, "Sv(%d)", i);
+			Sv[i].setName(var);
+			model.add(Sv[i]);
 		}
 
 		for(int i=0; i<V; ++i){
@@ -43,15 +43,15 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(insta
 		IloExpr SumFs(env);
 		IloExpr SumFt(env);
 
-		// Função Objetivo
+		// FUNÇÃO OBJETIVO (1)
 		for(int v = 0; v < V; v++){
-			SumFs += Fs[v];
-			SumFt += Ft[v];
+			SumFs += Cv[v];
+			SumFt += Sv[v];
 		}
 		model.add(IloMinimize(env, SumFs + (M-1)*SumFt));
-		// Fim função objetivo
+		// FIM FUNÇÃO OBJETIVO (1)
 
-		// INEQUAÇÃO 01
+		// RESTRIÇÃO (2)
 		for(int v = 0; v < V; v++){
 			IloExpr SumX(env);
 			const list<int>& adjListv = adjList[v];
@@ -59,12 +59,12 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(insta
 				if(existX(v, i, v, V))
 					SumX += x[v][i][v];
 			}
-			SumX += Ft[v];
-			model.add(SumX == Fs[v]);
+			SumX += Sv[v];
+			model.add(SumX == Cv[v]);
 		}
-		// FIM INEQUACAO 01
+		// FIM RESTRIÇÃO (2)
 
-		// INEQUAÇÃO 02 e 03
+		// RESTRIÇÃO (3)
 		for(int f = 0; f < V; f++){
 			IloExpr SumXijf(env);
 			for(int i = 0; i < V; i++){
@@ -73,28 +73,16 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(insta
 				for(int j : adjListi){
 					if(existX(i, j, f, V))
 						SumXijf += x[i][j][f];
-
 				}
-
 			}
 
 			int minVL = min(V, L);
 
-			model.add(SumXijf <= (Fs[f] - Ft[f]) * minVL); // equação 2
-			//model.add(SumXijf <= (1 - Ft[f]) * minVL); // equação 3
+			model.add(SumXijf <= (Cv[f] - Sv[f]) * minVL);
 		}
-		// FIM INEQUAÇÃO 02 e 03
+		// FIM RESTRIÇÃO (3)
 
-		// INEQUAÇÃO 03
-		/*for(int f = 0; f < V; f++){
-			IloExpr FsFt(env);
-			FsFt += Fs[f];
-			FsFt += Ft[f];
-			model.add( FsFt <= 1);
-		}*/
-		// FIM INEQUAÇÃO 03
-
-		// INEQUAÇÃO 04
+		// RESTRIÇÃO (4)
 		for(int v = 0; v < V; v++){
 			for(int f = 0; f < v; f++){
 				IloExpr SumXivf(env);
@@ -110,10 +98,9 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(insta
 				model.add(SumXivf == SumXvif);
 			}
 		}
-		// FIM INEQUAÇÃO 04
+		// FIM RESTRIÇÃO (4)
 
-
-		// INEQUAÇÃO 05
+		// RESTRIÇÃO (5)
 		for(int v = 0; v < V; v++){
 			IloExpr SumX(env);
 			const list<int>& adjListv = adjList[v];
@@ -124,12 +111,12 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(insta
 				}
 			}
 
-			SumX += Ft[v];
+			SumX += Sv[v];
 			model.add(SumX == 1);
 		}
-		// FIM INEQUAÇÃO 05
+		// FIM RESTRIÇÃO (5)
 
-		//INEQUAÇÃO 06
+		// RESTRIÇÃO (6)
 		vector<vector<pair<int, int> > > El(L);
 		for(int i = 0; i < V; i++){
 			const list<int>& adjListi = adjList[i];
@@ -155,22 +142,8 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(insta
 
 			}
 		}
-		// FIM INEQUAÇÃO 06
+		// FIM RESTRIÇÃO (6)
 
-
-		/*for(int v = 0; v < V; v++){
-			IloExpr SumXvjf(env);
-			for(int f = 0; f < V; f++){
-				const list<int>& adjListv = adjList[v];
-
-				for(int j : adjListv){
-					if(existX(v, j, f, V))
-						SumXvjf += x[v][j][f];
-				}
-
-			}
-			model.add(SumXvjf <= 1);
-		}*/
 }
 
 void RccpFlow::rccpFlow(){
@@ -184,7 +157,7 @@ void RccpFlow::rccpFlow(){
 	RccpFlow.use(lazyCbk);
 
 	// callback fracionario
-	MyCutCallback* cutCbk = new (env) MyCutCallback(env, x, Fs, Ft, graph);
+	MyCutCallback* cutCbk = new (env) MyCutCallback(env, x, Cv, Sv, graph);
 	RccpFlow.use(cutCbk);
 
 	RccpFlow.setOut(env.getNullStream()); // @suppress("Invalid arguments")
@@ -196,26 +169,7 @@ void RccpFlow::rccpFlow(){
 
 	//RccpFlow.exportModel("RccpFlow.lp");
 
-	/*do{
-		RccpFlow.solve();
-	}while(searchSubcycles(RccpFlow));
-	*/
-
 	finalTime = clock();
-
-	/*// Mostra as arestas em cada fluxo
-	for(int f = 0; f < V; f++){
-		cout << "Fluxo " << f << endl;
-		for(int i = 0; i < V; i++){
-			const list<int>& adjListi = adjList[i];
-			for(int j : adjListi){
-				if(existX(i, j, f, V) && RccpFlow.getValue(x[i][j][f]) > 0.99){
-					cout << "(" << i << ", " << j << ") ";
-				}
-			}
-		}
-		cout << endl;
-	}*/
 
 	// Monta os ciclos da solução
 	vector<vector<int> > ciclos;
@@ -223,13 +177,13 @@ void RccpFlow::rccpFlow(){
 
 		vector<int> ciclo;
 
-		if(RccpFlow.getValue(Ft[f]) > 0.99){
+		if(RccpFlow.getValue(Sv[f]) > 0.99){
 			ciclo.push_back(f);
 			ciclos.push_back(ciclo);
 			continue;
 		}
 
-		if(RccpFlow.getValue(Fs[f]) < 0.1){
+		if(RccpFlow.getValue(Cv[f]) < 0.1){
 			continue;
 		}
 
@@ -293,14 +247,6 @@ bool RccpFlow::searchSubcycles(IloCplex& cplex){
 
 			}
 		}
-
-		/*for(int i = 0; i < V; i++){
-			cout << i << ": ";
-			for(int j : adjList[i]){
-				cout << j << " -> ";
-			}
-			cout << endl;
-		}*/
 
 		vector<vector<int>> components;
 		getComponents(components, flowAdjList);

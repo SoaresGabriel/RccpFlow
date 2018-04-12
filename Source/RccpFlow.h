@@ -20,8 +20,8 @@ private:
 	IloEnv env;
 	IloModel model;
 	IloArray< IloArray <IloBoolVarArray> > x;
-	IloBoolVarArray Fs;
-	IloBoolVarArray Ft;
+	IloBoolVarArray Cv;
+	IloBoolVarArray Sv;
 
 	bool searchSubcycles(IloCplex& cplex);
 	void getComponents(vector<vector<int> >& components, vector<vector<int> >& adjList);
