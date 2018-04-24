@@ -3,8 +3,8 @@ project(RccpFlow)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(headers Source/Graph.h Source/MyCutCallback.h Source/MyLazyCallback.h Source/RccpFlow.h Source/ReadData.h Source/Util.h)
-set(source Source/Main.cpp Source/Graph.cpp Source/MyCutCallback.cpp Source/MyLazyCallback.cpp Source/RccpFlow.cpp Source/ReadData.cpp Source/Util.cpp)
+set(headers Source/Graph.h Source/MyCutCallback.h Source/MyLazyCallback.h Source/RccpFlow.h Source/ReadData.h Source/Util.h Source/MinCut.h Source/GraphUtils.h)
+set(source Source/Main.cpp Source/Graph.cpp Source/MyCutCallback.cpp Source/MyLazyCallback.cpp Source/RccpFlow.cpp Source/ReadData.cpp Source/Util.cpp Source/MinCut.cpp Source/GraphUtils.cpp)
 
 set(Boost_USE_STATIC_LIBS ON )
 
