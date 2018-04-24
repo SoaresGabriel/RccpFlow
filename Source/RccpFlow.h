@@ -22,10 +22,6 @@ private:
 	IloArray< IloArray <IloBoolVarArray> > x;
 	IloBoolVarArray Cv;
 	IloBoolVarArray Sv;
-
-	bool searchSubcycles(IloCplex& cplex);
-	void getComponents(vector<vector<int> >& components, vector<vector<int> >& adjList);
-	void dfs(int v, vector<int> &component, vector<vector<int>>& adjList, vector<int>& visited);
 };
 
 #endif /* RCCPFLOW_H_ */
