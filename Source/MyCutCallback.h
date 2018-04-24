@@ -24,9 +24,7 @@ private:
 
 	Graph& graph;
 
-	void verifyComponent(vector<int> &component, int f);
-
-	void addTspConcordeCuts(CCtsp_lpcut_in **tsp_cuts, vector<int> &component, unsigned int f);
+	void verifyComponent(vector<vector<double> > &adjMatrix, vector<int> &component, int f);
 
 	void getComponents(vector<vector<int> >& components, vector<vector<int> >& adjList);
 
