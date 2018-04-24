@@ -13,7 +13,7 @@ IloCplex::CallbackI* MyCutCallback::duplicateCallback() const {
 
 void MyCutCallback::main(){
 
-	int V = graph.N;
+	int V = graph.V;
 
 	vector<list<int> > originalAdjList = graph.getAdjList();
 

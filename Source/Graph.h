@@ -15,10 +15,10 @@ private:
 	vector<list<int> > adjList;
 
 public:
-	const int N;
-	const int C;
+	const unsigned int V;
+	const unsigned int L;
 
-	Graph(int N, int C);
+	Graph(unsigned int V, unsigned int L);
 
 	const vector<list<int> >& getAdjList();
 	

@@ -4,7 +4,7 @@
 #include <cmath>
 #include <utility>
 
-RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(move(instance)), adjList(graph.getAdjList()), V(graph.N), M(graph.getTrivialWeight()), L(graph.C),
+RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(move(instance)), adjList(graph.getAdjList()), V(graph.V), M(graph.getTrivialWeight()), L(graph.L),
 									model(env), x(env, V), Cv(env, V), Sv(env, V) {
 
 		const vector<list<int> >& adjList = graph.getAdjList();
@@ -29,7 +29,7 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(move(
 				IloBoolVarArray vetor(env, V);
 				x[i][j] = vetor;
 
-				if(graph.getColor(i, j) != graph.C){
+				if(graph.getColor(i, j) != graph.L){
 					for(int f = 0; f < V; f++){
 						if(existX(i, j, f, V)){
 							sprintf(var, "x(%d,%d,%d)", i, j, f);

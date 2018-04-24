@@ -2,14 +2,14 @@
 
 #include <iostream>
 
-Graph::Graph(int N, int C) : N(N), C(C){
-	adjMatrix.resize(N);
-	adjList.resize(N);
+Graph::Graph(unsigned int V, unsigned int L) : V(V), L(L){
+	adjMatrix.resize(V);
+	adjList.resize(V);
 
-	for(int i = 0; i < N; i++){
-		adjMatrix[i].resize(N);
-		for(int j = 0; j < N; j++){
-			adjMatrix[i][j] = C;
+	for(int i = 0; i < V; i++){
+		adjMatrix[i].resize(V);
+		for(int j = 0; j < V; j++){
+			adjMatrix[i][j] = L;
 		}
 	}
 }
@@ -24,15 +24,15 @@ int Graph::getColor(int v, int w){
 }
 
 unsigned int Graph::getTrivialWeight(){
-	return static_cast<unsigned int>((N / 3) + 1);
+	return ((V / 3) + 1);
 }
 
 bool Graph::hasEdge(int v, int w){
-	return v != w && getColor(v, w) < C;
+	return v != w && getColor(v, w) < L;
 }
 
 void Graph::insert(int v, int w, int color){
-	if(color < C){
+	if(color < L){
 		adjMatrix[v][w] = color;
 		adjMatrix[w][v] = color;
 
@@ -49,7 +49,7 @@ int Graph::deleteSingleColor(){
 	int color;
 	int delOneColor = 0;
 
-	for(int i = 0; i < N; i++){
+	for(int i = 0; i < V; i++){
 		if(adjList[i].empty())
 			continue;
 
@@ -84,12 +84,12 @@ int Graph::deleteSingleColor(){
 
 int Graph::deleteBridges(){
 
-	vector<int> discoveryTime(N, -1);
-	vector<int> low(N, -1);
+	vector<int> discoveryTime(V, -1);
+	vector<int> low(V, -1);
 	int time = 1;
 	int bridges = 0;
 
-	for(int i = 0; i < N; i++){
+	for(int i = 0; i < V; i++){
 		if(discoveryTime[i] == -1){
 			deleteBridgesAux(i, i, time, discoveryTime, low, bridges);
 		}
