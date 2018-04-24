@@ -20,7 +20,7 @@ void MyCutCallback::main(){
 	for(int f = 0; f < V; f++){
 
 		// monta lista de adjacencia do fluxo
-		vector<vector<int> > adjList(V);
+		vector<vector<int> > adjList(static_cast<unsigned long>(V));
 		for(int i = 0; i < V; i ++){
 
 			for(int j : originalAdjList[i]){
@@ -44,13 +44,11 @@ void MyCutCallback::main(){
 		vector<vector<int>> components;
 		getComponents(components, adjList);
 
-		if(components.size() == 0){
+		if(components.empty()){
 			continue;
 		}
 
-		for(unsigned int i = 0; i < components.size(); i++){
-			vector<int>& component = components[i];
-
+		for (auto &component : components) {
 			if(component.size() < 3)
 				continue;
 
@@ -85,7 +83,7 @@ void MyCutCallback::main(){
 				}
 
 				// adiciona a restricao se ela foi violada
-				int y = component.size() - 1;
+				auto y = static_cast<int>(component.size() - 1);
 				if(valor - 0.01 > y){
 					add(expr <= y ).end();
 				}
@@ -103,8 +101,8 @@ void MyCutCallback::getComponents(vector<vector<int> >& components, vector<vecto
 
 	for(unsigned int v = 0; v < adjList.size(); v++){
 
-		if(!visited[v] && adjList[v].size() > 0){
-			components.push_back(vector<int>());
+		if(!visited[v] && !adjList[v].empty()){
+			components.emplace_back();
 			dfs(v, components[components.size() - 1], adjList, visited);
 		}
 

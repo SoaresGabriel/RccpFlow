@@ -2,8 +2,9 @@
 #include "MyCutCallback.h"
 #include "MyLazyCallback.h"
 #include <cmath>
+#include <utility>
 
-RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(instance), adjList(graph.getAdjList()), V(graph.N), M(graph.getTrivialWeight()), L(graph.C),
+RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(move(instance)), adjList(graph.getAdjList()), V(graph.N), M(graph.getTrivialWeight()), L(graph.C),
 									model(env), x(env, V), Cv(env, V), Sv(env, V) {
 
 		const vector<list<int> >& adjList = graph.getAdjList();
@@ -117,7 +118,7 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(insta
 		// FIM RESTRIÇÃO (5)
 
 		// RESTRIÇÃO (6)
-		vector<vector<pair<int, int> > > El(L);
+		vector<vector<pair<int, int> > > El(static_cast<unsigned long>(L));
 		for(int i = 0; i < V; i++){
 			const list<int>& adjListi = adjList[i];
 
@@ -153,15 +154,15 @@ void RccpFlow::rccpFlow(){
 	IloCplex RccpFlow(model);
 
 	// callback inteiro
-	MyLazyCallback* lazyCbk = new (env) MyLazyCallback(env, x, graph);
+    auto lazyCbk = new (env) MyLazyCallback(env, x, graph);
 	RccpFlow.use(lazyCbk);
 
 	// callback fracionario
-	MyCutCallback* cutCbk = new (env) MyCutCallback(env, x, graph);
+    auto cutCbk = new (env) MyCutCallback(env, x, graph);
 	RccpFlow.use(cutCbk);
 
-	RccpFlow.setOut(env.getNullStream()); // @suppress("Invalid arguments")
-	RccpFlow.setWarning(env.getNullStream()); // @suppress("Invalid arguments")
+	RccpFlow.setOut(env.getNullStream());
+	RccpFlow.setWarning(env.getNullStream());
 
 	RccpFlow.setParam(IloCplex::TiLim, 3*60*60); // 3h
 
@@ -212,20 +213,6 @@ void RccpFlow::rccpFlow(){
 
 	printResult(instance, ciclos, M, executionTime, RccpFlow.getNnodes(), optimal);
 
-	/*// Imprime os ciclos
-	for(unsigned int i = 0; i < ciclos.size(); i++){
-		cout << "Ciclo " << ciclos[i].size() << ": ";
-		for(unsigned int j = 0; j < ciclos[i].size(); j++){
-			cout << ciclos[i][j] << " ";
-		}
-		cout << endl;
-	}
-
-	for(int i = 0; i < V; i++){
-		cout << "Vertice" << i << "\tFs: " << RccpFlow.getValue(Fs[i])
-				<< "\tFt: " << RccpFlow.getValue(Ft[i]) << endl;
-	}*/
-
 }
 
 bool RccpFlow::searchSubcycles(IloCplex& cplex){
@@ -235,7 +222,7 @@ bool RccpFlow::searchSubcycles(IloCplex& cplex){
 	for(int f = 0; f < V; f++){
 
 		// monta lista de adjacencia do fluxo
-		vector<vector<int> > flowAdjList(V);
+		vector<vector<int> > flowAdjList(static_cast<unsigned long>(V));
 		for(int i = 0; i < V; i ++){
 
 			for(int j : adjList[i]){
@@ -255,10 +242,8 @@ bool RccpFlow::searchSubcycles(IloCplex& cplex){
 			continue;
 		}
 
-		for(unsigned int i = 0; i < components.size(); i++){
-			vector<int>& component = components[i];
-
-			// verifica se essa componente contem o vertice desse fluxo
+		for (auto &component : components) {
+            // verifica se essa componente contem o vertice desse fluxo
 			bool containsF = false;
 			for(int v : component){
 				if (v == f){
@@ -287,9 +272,8 @@ bool RccpFlow::searchSubcycles(IloCplex& cplex){
 					}
 				}
 
-				int y = component.size() - 1;
+                auto y = static_cast<int>(component.size() - 1);
 				cplex.addCut(expr <= y );
-
 
 			}
 
@@ -304,8 +288,8 @@ void RccpFlow::getComponents(vector<vector<int> >& components, vector<vector<int
 
 	for(unsigned int v = 0; v < adjList.size(); v++){
 
-		if(!visited[v] && adjList[v].size() > 0){
-			components.push_back(vector<int>());
+		if(!visited[v] && !adjList[v].empty()){
+			components.emplace_back();
 			dfs(v, components[components.size() - 1], adjList, visited);
 		}
 

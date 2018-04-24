@@ -6,7 +6,7 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-	srand((int)time(0));
+	srand(static_cast<unsigned int>(time(nullptr)));
 
 	string instance = argv[1];
 

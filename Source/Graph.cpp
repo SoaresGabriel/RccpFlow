@@ -24,7 +24,7 @@ int Graph::getColor(int v, int w){
 }
 
 unsigned int Graph::getTrivialWeight(){
-	return (N/3) + 1;
+	return static_cast<unsigned int>((N / 3) + 1);
 }
 
 bool Graph::hasEdge(int v, int w){
@@ -50,7 +50,7 @@ int Graph::deleteSingleColor(){
 	int delOneColor = 0;
 
 	for(int i = 0; i < N; i++){
-		if(adjList[i].size() == 0)
+		if(adjList[i].empty())
 			continue;
 
 		/*
@@ -106,7 +106,7 @@ int Graph::deleteBridgesAux(int parent, int vertex, int &time, vector<int> &disc
 
 	bool itErased;
 	int neighbor;
-	for(list<int>::iterator it = adjList[vertex].begin(); it != adjList[vertex].end();){
+	for(auto it = adjList[vertex].begin(); it != adjList[vertex].end();){
 		neighbor = *it;
 		itErased = false;
 		if(discoveryTime[neighbor] == -1){
