@@ -157,7 +157,7 @@ void RccpFlow::rccpFlow(){
 	RccpFlow.use(lazyCbk);
 
 	// callback fracionario
-	MyCutCallback* cutCbk = new (env) MyCutCallback(env, x, Cv, Sv, graph);
+	MyCutCallback* cutCbk = new (env) MyCutCallback(env, x, graph);
 	RccpFlow.use(cutCbk);
 
 	RccpFlow.setOut(env.getNullStream()); // @suppress("Invalid arguments")
