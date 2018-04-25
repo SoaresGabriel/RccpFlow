@@ -3,11 +3,12 @@
 #include "MyLazyCallback.h"
 #include <cmath>
 #include <utility>
+#include <set>
 
 RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(move(instance)), adjList(graph.getAdjList()), V(graph.V), M(graph.getTrivialWeight()), L(graph.L),
 									model(env), x(env, V), Cv(env, V), Sv(env, V) {
 
-		const vector<list<int> >& adjList = graph.getAdjList();
+		const vector<list<int> >& adjList(graph.getAdjList());
 
 		char var[100];
 		for (int i = 0; i < V; i++) {
@@ -145,6 +146,31 @@ RccpFlow::RccpFlow(Graph& graph, string instance) : graph(graph), instance(move(
 		}
 		// FIM RESTRIÇÃO (6)
 
+        vector<set<int> > Vl(static_cast<unsigned long>(L));
+
+        for(int v = 0; v < V; v++) {
+            for(int w : adjList[v]) {
+                int color = graph.getColor(v, w);
+                Vl[color].insert(v);
+                Vl[color].insert(w);
+            }
+        }
+
+        // limit number of edges per color
+        for(int l = 0; l < L; l++) {
+            IloExpr Sum(env);
+
+            for(int f = 0; f < V - 2; f++) {
+                for(pair<int, int> edge : El[l]) {
+                    if(edge.first >= f && edge.second >= f) {
+                        Sum += x[edge.first][edge.second][f];
+                    }
+                }
+            }
+
+            auto limit = static_cast<int>(Vl[l].size() / 2);
+            model.add(Sum <= limit);
+        }
 }
 
 void RccpFlow::rccpFlow(){
