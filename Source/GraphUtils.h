@@ -8,6 +8,6 @@ using namespace std;
 
 
 void getComponents(vector<vector<int> >& components, vector<list<int> >& adjList);
-void dfs(int v, vector<int> &component, vector<list<int>>& adjList, vector<int>& visited);
+void dfs(int v, vector<int> &component, const vector<list<int>>& adjList, vector<int>& visited);
 
 #endif /* GRAPHUTILS_H_ */
