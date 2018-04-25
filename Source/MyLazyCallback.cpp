@@ -13,19 +13,18 @@ IloCplex::CallbackI* MyLazyCallback::duplicateCallback() const {
 
 void MyLazyCallback::main(){
 
-	int V = graph.V;
-
 	vector<list<int> > originalAdjList = graph.getAdjList();
 
-	for(int f = 0; f < V; f++){
+	for(int f = 0; f < graph.V - 2; f++){
 
 		// monta lista de adjacencia do fluxo
-		vector<vector<int> > adjList(V);
-		for(int i = 0; i < V; i ++){
+		vector<vector<int> > adjList(graph.V);
+		for(int i = f; i < graph.V; i++){
 
 			for(int j : originalAdjList[i]){
+				if(j < f) continue; // avoid symmetry
 
-				if(existX(i, j, f, V) && getValue(x[i][j][f]) > 0.01){
+				if(getValue(x[i][j][f]) > 0.0001){
 					adjList[i].push_back(j);
 				}
 
@@ -39,10 +38,8 @@ void MyLazyCallback::main(){
 			continue;
 		}
 
-		for(unsigned int i = 0; i < components.size(); i++){
-			vector<int>& component = components[i];
-
-			// verifica se essa componente contem o vertice desse fluxo
+		for (auto &component : components) {
+            // verifica se essa componente contem o vertice desse fluxo
 			bool containsF = false;
 			for(int v : component){
 				if (v == f){
@@ -56,20 +53,23 @@ void MyLazyCallback::main(){
 
 				IloExpr expr(getEnv());
 
-				int a, b;
+				int v, w;
 
 				for(unsigned int j = 0; j < component.size(); j++){
-					a = component[j];
+					v = component[j];
+					if(v < f) continue; // avoid symmetry
 					for(unsigned int k = j + 1; k < component.size(); k++){
-						b = component[k];
-						if(graph.hasEdge(a, b) && existX(a, b, f, V)){
-							expr += x[a][b][f];
-							expr += x[b][a][f];
+						w = component[k];
+                        if(w < f) continue; // avoid symmetry
+
+						if(graph.hasEdge(v, w)){
+							expr += x[v][w][f];
+							expr += x[w][v][f];
 						}
 					}
 				}
 
-				int y = component.size() - 1;
+                auto y = static_cast<int>(component.size() - 1);
 				add(expr <= y ).end();
 
 			}
@@ -86,8 +86,8 @@ void MyLazyCallback::getComponents(vector<vector<int> >& components, vector<vect
 
 	for(unsigned int v = 0; v < adjList.size(); v++){
 
-		if(!visited[v] && adjList[v].size() > 0){
-			components.push_back(vector<int>());
+		if(!visited[v] && !adjList[v].empty()){
+			components.emplace_back();
 			dfs(v, components[components.size() - 1], adjList, visited);
 		}
 
