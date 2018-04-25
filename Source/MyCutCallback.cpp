@@ -1,5 +1,6 @@
 #include "MyCutCallback.h"
 #include "Util.h"
+#include "MinCut.h"
 
 MyCutCallback::MyCutCallback(IloEnv env, IloArray< IloArray <IloBoolVarArray> > &x, Graph& graph) :
 		IloCplex::UserCutCallbackI(env),
@@ -13,21 +14,81 @@ IloCplex::CallbackI* MyCutCallback::duplicateCallback() const {
 
 void MyCutCallback::main(){
 
-	int V = graph.V;
+	vector<list<int> > originalAdjList(graph.getAdjList());
 
-	vector<list<int> > originalAdjList = graph.getAdjList();
+	vector<vector<double> > adjMatrix(graph.V, vector<double>(graph.V, 0));
 
-	for(int f = 0; f < V; f++){
+	vector<unsigned int> vertices = {graph.V - 1, graph.V - 2};
+
+	for(int f = graph.V-3; f >= 0; f--) {
+        for(int v = f; v < graph.V; v++) {
+            for(int w : originalAdjList[v]) {
+                if(w < f) continue; // avoid symmetry
+
+                adjMatrix[v][w] += getValue(x[v][w][f]);
+            }
+        }
+
+        vertices.push_back(static_cast<unsigned int>(f));
+        vector<vector<int> > components = minCut(adjMatrix, vertices);
+
+        for(const vector<int> &component : components) {
+        	bool contains = false;
+        	for(const int &v : component) {
+        		if(v == f) {
+        			contains = true;
+        			break;
+        		}
+        	}
+
+        	if(contains) {
+
+				IloExpr expr(getEnv());
+
+				int v, w;
+
+				double total = 0;
+
+				for(int a = f; a < graph.V; a++) {
+					for(unsigned int j = 0; j < component.size(); j++){
+						v = component[j];
+						if(v < a) continue; // avoid symmetry
+						for(unsigned int k = j + 1; k < component.size(); k++){
+							w = component[k];
+							if(w < a) continue; // avoid symmetry
+
+							if(graph.hasEdge(v, w)){
+								expr += x[v][w][a];
+								expr += x[w][v][a];
+								total += getValue(x[v][w][a]);
+								total += getValue(x[w][v][a]);
+							}
+						}
+					}
+				}
+
+				auto y = static_cast<int>(component.size() - 1);
+
+				if(total - 0.0001 > y) {
+					add(expr <= y ).end();
+					cout << total << " > " << y << endl;
+				}
+
+        	}
+        }
+	}
+
+
+	for(int f = 0; f < graph.V; f++){
 
 		// monta lista de adjacencia do fluxo
-		vector<vector<int> > adjList(static_cast<unsigned long>(V));
-		for(int i = 0; i < V; i ++){
+		vector<vector<int> > adjList(static_cast<unsigned long>(graph.V));
+		for(int i = f; i < graph.V; i ++){
 
 			for(int j : originalAdjList[i]){
 
-				if(existX(i, j, f, V) && getValue(x[i][j][f]) > 0.01){
+				if(existX(i, j, f, graph.V) && getValue(x[i][j][f]) > 0.01){
 					adjList[i].push_back(j);
-					adjList[j].push_back(i);
 				}
 
 			}
@@ -73,7 +134,7 @@ void MyCutCallback::main(){
 					a = component[j];
 					for(unsigned int k = j + 1; k < component.size(); k++){
 						b = component[k];
-						if(graph.hasEdge(a, b) && existX(a, b, f, V)){
+						if(graph.hasEdge(a, b) && existX(a, b, f, graph.V)){
 							expr += x[a][b][f];
 							expr += x[b][a][f];
 							valor += getValue(x[a][b][f]);
