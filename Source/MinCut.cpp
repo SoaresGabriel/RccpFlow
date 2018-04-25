@@ -121,7 +121,7 @@ vector<vector<int> > minCut(vector<vector<double> > &graph, vector<int> &compone
 	double minCutValue = INT_MAX;
 
 	for(int i = 1; i < component.size(); i++) {
-		minCutMaxFlow(graph, 0, i, minCut, minCutValue);
+		minCutMaxFlow(graph, static_cast<unsigned int>(component[0]), static_cast<unsigned int>(component[i]), minCut, minCutValue);
 	}
 
 	vector<list<int> > adjList(graph.size());
