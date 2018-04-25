@@ -3,9 +3,6 @@
 
 #include <ilcplex/ilocplex.h>
 #include "Graph.h"
-extern "C"{
-#include "concorde.h"
-}
 
 class MyCutCallback : public IloCplex::UserCutCallbackI {
 public:
