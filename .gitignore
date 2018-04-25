@@ -9,3 +9,7 @@
 /out/
 **/*.out
 **/*.lp
+
+# Idea
+.idea
+cmake-build-debug/
