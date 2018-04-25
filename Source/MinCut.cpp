@@ -56,7 +56,7 @@ void dfs(vector<vector<double> > &rGraph, unsigned int s, vector<bool> &visited)
 }
 
 // Returns the maximum flow from s to t in the given graph
-void minCutMaxFlow(vector<vector<double> > &graph, unsigned int s, unsigned int t, vector<pair<int, int>>& minCut, double &currentMinCutValue) {
+void minCutMaxFlow(const vector<vector<double> > &graph, unsigned int s, unsigned int t, vector<pair<int, int>>& minCut, double &currentMinCutValue) {
     int u, v;
 
     auto V = static_cast<unsigned int>(graph.size());
@@ -114,14 +114,14 @@ void minCutMaxFlow(vector<vector<double> > &graph, unsigned int s, unsigned int 
 
 }
 
-vector<vector<int> > minCut(vector<vector<double> > &graph, vector<int> &component) {
+vector<vector<int> > minCut(const vector<vector<double> > &graph, const vector<unsigned int> &component) {
 
     vector<pair<int, int>> minCut;
 
     double minCutValue = INT_MAX;
 
     for(unsigned int i = 1; i < component.size(); i++) {
-        minCutMaxFlow(graph, 0, i, minCut, minCutValue);
+        minCutMaxFlow(graph, component[0], component[i], minCut, minCutValue);
     }
 
     vector<list<int> > adjList(graph.size());

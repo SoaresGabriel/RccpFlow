@@ -3,6 +3,6 @@
 
 #include <vector>
 
-std::vector<std::vector<int> > minCut(std::vector<std::vector<double> > &graph, std::vector<int> &component);
+std::vector<std::vector<int> > minCut(const std::vector<std::vector<double> > &graph, const std::vector<unsigned int> &component);
 
 #endif /* MINCUT_H_ */
