@@ -56,7 +56,7 @@ void dfs(vector<vector<double> > &rGraph, unsigned int s, vector<bool> &visited)
 }
 
 // Returns the maximum flow from s to t in the given graph
-void minCutMaxFlow(const vector<vector<double> > &graph, unsigned int s, unsigned int t, vector<pair<int, int>>& minCut, double &currentMinCutValue) {
+void minCutMaxFlow(const vector<vector<double> > &graph, unsigned int s, unsigned int t, vector<int>& minCut, double &currentMinCutValue) {
     int u, v;
 
     auto V = static_cast<unsigned int>(graph.size());
@@ -95,7 +95,7 @@ void minCutMaxFlow(const vector<vector<double> > &graph, unsigned int s, unsigne
         max_flow += path_flow;
     }
 
-    if (max_flow > currentMinCutValue) {
+    if (max_flow < currentMinCutValue) {
         currentMinCutValue = max_flow;
 
         minCut.clear();
@@ -106,47 +106,25 @@ void minCutMaxFlow(const vector<vector<double> > &graph, unsigned int s, unsigne
 
         // Print all edges that are from a reachable vertex to
         // non-reachable vertex in the original graph
-        for (int i = 0; i < V; i++)
-            for (int j = 0; j < V; j++)
-                if (visited[i] && !visited[j] && graph[i][j])
-                    minCut.emplace_back(i, j);
+        for (int i = 0; i < V; i++) {
+            if(visited[i]) {
+                minCut.push_back(i);
+            }
+        }
     }
 
 }
 
-vector<vector<int> > minCut(const vector<vector<double> > &graph, const vector<unsigned int> &component) {
+vector<int> minCut(const vector<vector<double> > &graph, const vector<unsigned int> &component) {
 
-    vector<pair<int, int>> minCut;
+    vector<int> minCut;
 
     double minCutValue = INT_MAX;
 
-    for(unsigned int i = 1; i < component.size(); i++) {
-        minCutMaxFlow(graph, component[0], component[i], minCut, minCutValue);
+    for(unsigned int i = 0; i < component.size() - 1; i++) {
+        minCutMaxFlow(graph, component.back(), component[i], minCut, minCutValue);
     }
 
-    vector<list<int> > adjList(graph.size());
 
-    for(int i = 0; i < graph.size(); i++){
-
-        for(int j = 0; j < graph.size(); j++){
-
-            if(graph[i][j] > 0.0001){
-                adjList[i].push_back(j);
-                adjList[j].push_back(i);
-            }
-
-        }
-    }
-
-    for(auto edge : minCut) {
-        adjList[edge.first].remove(edge.second);
-        adjList[edge.second].remove(edge.first);
-    }
-
-    vector<vector<int> > components;
-
-    getComponents(components, adjList);
-
-
-    return components;
+    return minCut;
 }
