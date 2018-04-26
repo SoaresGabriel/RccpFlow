@@ -10,6 +10,7 @@ class Graph {
 private:
 	int deleteSingleColor();
 	int deleteBridges();
+	int deleteVertexPairTwoColor();
 	int deleteBridgesAux(int parent, int vertex, int &time, vector<int> &discoveryTime, vector<int> &low, int &bridges);
 	vector<vector<int> > adjMatrix;
 	vector<list<int> > adjList;

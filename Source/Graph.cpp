@@ -1,6 +1,7 @@
 #include "Graph.h"
 
 #include <iostream>
+#include <boost/dynamic_bitset.hpp>
 
 Graph::Graph(unsigned int V, unsigned int L) : V(V), L(L){
 	adjMatrix.resize(V);
@@ -132,19 +133,56 @@ int Graph::deleteBridgesAux(int parent, int vertex, int &time, vector<int> &disc
 	return bridges;
 }
 
+int Graph::deleteVertexPairTwoColor() {
+    vector<boost::dynamic_bitset<> > vertexColors(V, boost::dynamic_bitset<>(L));
+
+    int deleted = 0;
+
+    for(int v = 0; v < V; v++) {
+        for(auto w : adjList[v]) {
+            vertexColors[v].set(static_cast<unsigned long>(getColor(v, w)));
+        }
+    }
+
+    bool itErased;
+    int w;
+    for(int v = 0; v < V; v++) {
+        for(auto it = adjList[v].begin(); it != adjList[v].end();) {
+            itErased = false;
+            w = *it;
+
+            if((vertexColors[v] | vertexColors[w]).count() == 2) {
+                it = adjList[v].erase(it);
+                itErased = true;
+                adjList[w].remove(v);
+                deleted++;
+            }
+
+            if(!itErased) it++;
+        }
+    }
+
+    return deleted;
+}
+
 void Graph::reduce(){
 
-	int singleColorDeleted = 0, bridgesDeleted = 0, scd, bd;
+	int singleColorDeleted = 0, bridgesDeleted = 0, vertexPairTwoColorDeleted = 0, scd, bd, vptcd;
 
 	do{
 		bd = deleteBridges();
 		scd = deleteSingleColor();
+		vptcd = deleteVertexPairTwoColor();
 
 		bridgesDeleted += bd;
 		singleColorDeleted += scd;
+		vertexPairTwoColorDeleted += vptcd;
 
-	}while(bd > 0 || scd > 0);
+	}while(bd > 0 || scd > 0 || vptcd > 0);
 
-	cout << "Pre-processamento: " << (singleColorDeleted + bridgesDeleted) << " arestas deletadas" << endl << endl;
+	cout << "Pre-processamento: " << (singleColorDeleted + bridgesDeleted) << " arestas deletadas" << endl;
+    cout << bridgesDeleted << " bridges deleted." << endl;
+    cout << singleColorDeleted << " single color deleted." << endl;
+    cout << vertexPairTwoColorDeleted << " vertex pair with just two color vertices deleted." << endl << endl;
 
 }
