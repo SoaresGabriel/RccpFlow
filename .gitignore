@@ -13,3 +13,7 @@
 # Idea
 .idea
 cmake-build-debug/
+
+# Executables
+RccpFlow
+RccpRunner
