@@ -18,3 +18,5 @@ add_executable(RccpFlow ${headers} ${source})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 target_link_libraries(RccpFlow ilocplex concert cplex m pthread)
+
+add_executable(RccpRunner Runner/RccpRunner.cpp)
