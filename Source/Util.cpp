@@ -5,12 +5,12 @@ bool existX(int i, int j, int f, int V){
 	return i >= f && j >= f && f < V-2;
 }
 
-string getInstanceName(string instance){
+string getInstanceName(const string &instance){
 
-	string::size_type loc = instance.find_last_of(".", instance.size() );
-	string::size_type loc2 = instance.find_last_of("/", instance.size() );
+	string::size_type loc = instance.find_last_of('.', instance.size() );
+	string::size_type loc2 = instance.find_last_of('/', instance.size() );
 	if(loc2 == string::npos)
-			loc2 = instance.find_last_of("\\", instance.size() );
+			loc2 = instance.find_last_of('\\', instance.size() );
 
 	string instanceName;
 	if (loc != string::npos) {
@@ -29,8 +29,8 @@ void printResult(string instance, vector<vector<int> >& cycles, int trivialWeigh
 
 		int trivial = 0, nonTrivial = 0;
 
-		for(unsigned int i = 0; i < cycles.size(); i++){
-			if(cycles[i].size() > 1)
+		for (auto &cycle : cycles) {
+			if(cycle.size() > 1)
 				nonTrivial++;
 			else
 				trivial++;
@@ -49,7 +49,7 @@ void printResult(string instance, vector<vector<int> >& cycles, int trivialWeigh
 		cout << endl;
 
 		/* imprime resultado no arquivo */
-		string outFile = "./out/" + getInstanceName(instance) + ".out";
+		string outFile = "./Output/" + getInstanceName(instance) + ".out";
 		ofstream outf(outFile, ios::out);
 
 		outf << "Cover Weight: " << obj << endl;
@@ -60,11 +60,11 @@ void printResult(string instance, vector<vector<int> >& cycles, int trivialWeigh
 		outf << "Execution time: " << executionTime << " ms" << endl;
 
 		outf << "Cycles: " << endl;
-		for (unsigned int i = 0; i < cycles.size(); i++) {
-			for (unsigned int j = 0; j < cycles[i].size()-1; j++) {
-				outf << cycles[i][j] << " -> ";
+		for (auto &cycle : cycles) {
+			for (unsigned int j = 0; j < cycle.size()-1; j++) {
+				outf << cycle[j] << " -> ";
 			}
-			outf << cycles[i][cycles[i].size()-1] << endl;
+			outf << cycle[cycle.size()-1] << endl;
 		}
 
 

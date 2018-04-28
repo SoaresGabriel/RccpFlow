@@ -5,8 +5,9 @@
 .cproject
 .gdbinit
 
-# Others
+# Output files
 /out/
+/Output/
 **/*.out
 **/*.lp
 
