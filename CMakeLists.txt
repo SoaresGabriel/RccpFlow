@@ -13,8 +13,6 @@ set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DIL_STD" )
 include_directories("/opt/ibm/ILOG/CPLEX_Studio1271/cplex/include" "/opt/ibm/ILOG/CPLEX_Studio1271/concert/include")
 link_directories("/opt/ibm/ILOG/CPLEX_Studio1271/cplex/lib/x86-64_linux/static_pic" "/opt/ibm/ILOG/CPLEX_Studio1271/concert/lib/x86-64_linux/static_pic")
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
 add_executable(RccpFlow ${headers} ${source})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
