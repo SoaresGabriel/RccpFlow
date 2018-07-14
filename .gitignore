@@ -18,3 +18,4 @@ cmake-build-debug/
 # Executables
 rccpFlow
 rccpRunner
+columnGeneration

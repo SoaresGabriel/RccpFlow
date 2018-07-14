@@ -12,14 +12,19 @@ link_directories("/opt/ibm/ILOG/CPLEX_Studio1271/cplex/lib/x86-64_linux/static_p
 set(commonFiles Common/Graph.h Common/Graph.cpp Common/ReadData.h Common/ReadData.cpp)
 set(rccpFlowHeaders RccpFlow/MyCutCallback.h RccpFlow/MyLazyCallback.h RccpFlow/RccpFlow.h RccpFlow/Util.h)
 set(rccpFlowSources RccpFlow/MyCutCallback.cpp RccpFlow/MyLazyCallback.cpp RccpFlow/RccpFlow.cpp RccpFlow/Util.cpp)
+set(cgHeaders ColumnGeneration/SlaveExactModel.h)
+set(cgSources ColumnGeneration/SlaveExactModel.cpp)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(rccpFlow RccpFlow/Main.cpp ${commonFiles} ${rccpFlowHeaders} ${rccpFlowSources})
+add_executable(columnGeneration ${commonFiles} ${cgHeaders} ${cgSources})
 add_executable(rccpRunner Runner/RccpRunner.cpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
-target_link_libraries(rccpFlow ilocplex concert cplex m pthread)
+set(cplexLibraries ilocplex concert cplex m pthread)
+target_link_libraries(rccpFlow ${cplexLibraries})
+target_link_libraries(columnGeneration ${cplexLibraries})
 
 
