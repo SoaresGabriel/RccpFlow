@@ -1,5 +1,4 @@
 #include "MyLazyCallback.h"
-#include "Util.h"
 
 MyLazyCallback::MyLazyCallback(IloEnv env, IloArray< IloArray <IloBoolVarArray> > &x, Graph& graph) :
 		IloCplex::LazyConstraintCallbackI(env),

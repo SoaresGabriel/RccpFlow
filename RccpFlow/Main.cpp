@@ -1,6 +1,6 @@
 #include <iostream>
-#include "ReadData.h"
-#include "Graph.h"
+#include "../Common/ReadData.h"
+#include "../Common/Graph.h"
 #include "RccpFlow.h"
 
 using namespace std;

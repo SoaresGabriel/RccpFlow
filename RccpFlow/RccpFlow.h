@@ -1,9 +1,9 @@
 #ifndef RCCPFLOW_H_
 #define RCCPFLOW_H_
 
-#include "Graph.h"
 #include <ilcplex/ilocplex.h>
 #include "Util.h"
+#include "../Common/Graph.h"
 #include <list>
 
 class RccpFlow {

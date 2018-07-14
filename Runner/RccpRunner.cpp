@@ -65,7 +65,7 @@ int main() {
 				for (int a = 0; a < 5; a++) {
 
 					sprintf(buffer,
-							"./RccpFlow Instances/Rand_%d_%d_%d_%d.rnd", n, m,
+							"./rccpFlow Instances/Rand_%d_%d_%d_%d.rnd", n, m,
 							nm[a], l);
 
 					//cout << buffer << endl;
