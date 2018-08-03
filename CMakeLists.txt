@@ -23,7 +23,7 @@ add_executable(rccpRunner Runner/RccpRunner.cpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
-set(cplexLibraries ilocplex concert cplex m pthread)
+set(cplexLibraries ilocplex concert cplex m pthread dl)
 target_link_libraries(rccpFlow ${cplexLibraries})
 target_link_libraries(columnGeneration ${cplexLibraries})
 
