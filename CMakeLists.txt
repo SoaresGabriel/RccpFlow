@@ -6,8 +6,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(Boost_USE_STATIC_LIBS ON )
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DIL_STD" )
 
-include_directories("/opt/ibm/ILOG/CPLEX_Studio1271/cplex/include" "/opt/ibm/ILOG/CPLEX_Studio1271/concert/include")
-link_directories("/opt/ibm/ILOG/CPLEX_Studio1271/cplex/lib/x86-64_linux/static_pic" "/opt/ibm/ILOG/CPLEX_Studio1271/concert/lib/x86-64_linux/static_pic")
+include_directories("/opt/ibm/ILOG/CPLEX_Studio128/cplex/include" "/opt/ibm/ILOG/CPLEX_Studio128/concert/include")
+link_directories("/opt/ibm/ILOG/CPLEX_Studio128/cplex/lib/x86-64_linux/static_pic" "/opt/ibm/ILOG/CPLEX_Studio128/concert/lib/x86-64_linux/static_pic")
 
 set(commonFiles Common/Graph.h Common/Graph.cpp Common/ReadData.h Common/ReadData.cpp)
 set(rccpFlowHeaders RccpFlow/MyCutCallback.h RccpFlow/MyLazyCallback.h RccpFlow/RccpFlow.h RccpFlow/Util.h)
